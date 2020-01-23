@@ -338,6 +338,17 @@ struct String
         for ( size_t i = 0; i < n; i++ )
             str[i] = c;
     }
+    String(const String &other)  // Конструктор копирования
+        : size(other.size), str(new char[size+1])
+    {
+        for ( size_t i = 0; i <= size; i++ )
+            str[i] = other.str[i];
+    }
+//    String(const String &other) {
+//        new (this) String(other.str);
+//    }
+    
+//    String(const String &other) : String{other.str} {};
     
     void append(String &other)
     {
@@ -367,6 +378,38 @@ struct String
 	size_t size;
 	char *str;
 };
+
+
+//Класс Cls определен точно таким образом:
+struct Cls {
+    Cls(char c, double d, int i) : c(c), d(d), i(i) {}
+    
+private:
+    char c;
+    double d;
+    int i;
+};
+
+// Эта функция должна предоставить доступ к полю c объекта cls.
+// Обратите внимание, что возвращается ссылка на char, т. е.
+// доступ предоставляется на чтение и запись.
+char &get_c(Cls &cls) {
+    return *( (char*)(&cls) );
+}
+
+// Эта функция должна предоставить доступ к полю d объекта cls.
+// Обратите внимание, что возвращается ссылка на double, т. е.
+// доступ предоставляется на чтение и запись.
+double &get_d(Cls &cls) {
+    return *( (double*)(&cls) + 1 );
+}
+
+// Эта функция должна предоставить доступ к полю i объекта cls.
+// Обратите внимание, что возвращается ссылка на int, т. е.
+// доступ предоставляется на чтение и запись.
+int &get_i(Cls &cls) {
+    return *( (int*)(&cls) + 4 );
+}
 
 
 int main()
@@ -639,20 +682,61 @@ int main()
     
     
     {
-        //String str = " H ";
-        String str2( 5, 'F' );
-        //cout << strlen( "Hello world   " ) << endl;
-        for ( const char * a = str2.str; *a; a++ )
-            cout << *a;
-        cout << endl << endl;
+//        //String str = " H ";
+//        String str2( 5, 'F' );
+//        //cout << strlen( "Hello world   " ) << endl;
+//        for ( const char * a = str2.str; *a; a++ )
+//            cout << *a;
+//        cout << endl << endl;
         
-        String s1("Hello,");
-        String s2(" world!");
-        s1.append(s2); // теперь s1 хранит "Hello, world!"
-        for ( const char * a = s1.str; *a; a++ )
-            cout << *a;
-        cout << endl;
+//        String s1("Hello,");
+//        String s2(" world!");
+//        s1.append(s2); // теперь s1 хранит "Hello, world!"
+//        for ( const char * a = s1.str; *a; a++ )
+//            cout << *a;
+//        cout << endl;
     }
+    
+    
+    {
+//        Cls cdi('F', 2.64, 1031);
+//        Cls cdi2('A', 3.78, 842);
+//        Cls & link = cdi;
+//        cout << "Size of CLS = " << sizeof(link) << endl << endl;
+//        //char & ccc = *link.c;
+//        cout << "cast char = \t" << *( (char*)(&link) ) << endl;
+//        cout << "cast double = \t" << *( (double*)(&link) + 1 ) << endl;
+//        cout << "cast int = \t" << *( (int*)(&link) + 4 ) << endl << endl;
+        
+//        for ( unsigned i = 0; i < sizeof(link); i++ )
+//            cout << short( *( (uint8_t*)(&link) + i ) ) << endl;
+//        cout << endl;
+        
+//        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
+//        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
+//        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
+        
+//        cout << "get_c(cdi2) = \t" << get_c(cdi2) << endl;
+//        cout << "get_d(cdi2) = \t" << get_d(cdi2) << endl;
+//        cout << "get_i(cdi2) = \t" << get_i(cdi2) << endl << endl;
+        
+//        cout << " change cdi" << endl;
+//        char &cc = get_c(cdi);
+//        cc = 'G';
+//        double &dd = get_d(cdi);
+//        dd = 4.348;
+//        int &ii = get_i(cdi);
+//        ii = 413;
+//        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
+//        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
+//        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
+    }
+    
+    
+    {
+        
+    }
+    
     
     return 0;
 }
