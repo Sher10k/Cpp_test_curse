@@ -350,6 +350,27 @@ struct String
     
 //    String(const String &other) : String{other.str} {};
     
+    /* Реализуйте оператор присваивания */
+	String &operator=(const String &other)
+    {
+        if (this != &other)
+        {
+//            delete [] this->str;
+//            this->size = other.size;
+//            this->str = new char[this->size + 1];
+//            strcpy( this->str, other.str );
+            
+            delete [] str;
+            size = other.size;
+            str = new char[size + 1];
+            strcpy( str, other.str );
+        }
+        return *this;
+    }
+    
+    char & at(size_t idx)       { return str[idx]; }
+    char   at(size_t idx) const { return str[idx]; }
+    
     void append(String &other)
     {
         char *temp = new char[this->size + other.size + 1];
@@ -412,331 +433,399 @@ int &get_i(Cls &cls) {
 }
 
 
+struct Foo 
+{
+    void say() const { std::cout << "Foo says: " << msg << "\n"; }
+    
+protected:
+    Foo(const char *msg) : msg(msg) { }
+    
+private:
+    const char *msg;
+};
+
+void foo_says(const Foo &foo) 
+{ 
+    foo.say();
+}
+
+// Вам нужно определить функцию get_foo, как описано в задании,
+// чтобы компилировался и работал как ожидается следующий код:
+// foo_says(get_foo("Hello!"));
+const Foo get_foo(const char *msg) 
+{
+    struct iFoo : public Foo
+    {
+        iFoo(const char *msg) : Foo(msg) { }
+    };
+    iFoo ifoo(msg);
+    return ifoo;
+}
+//struct get_foo : public Foo
+//{
+//    get_foo(const char *msg) : Foo(msg) {}
+//};
+
+void foo(char) { std::cout << "char" << std::endl; }
+void foo(signed char) { std::cout << "signed char" << std::endl; }
+void foo(unsigned char) { std::cout << "unsigned char" << std::endl; }
+
+float  square(float value) { return value * value; }
+//double square(float value) { return (double)value * value; }  // error compile
+
+void promotion(char &) { std::cout << "char" << std::endl; }
+void promotion(int  &) { std::cout << "int"  << std::endl; }
+void promotion(long &) { std::cout << "long" << std::endl; }
+
 int main()
 {
-    
-    {
-//        int x = 2;
-//        unsigned p = 16;
-//        cout << "x= " << x << endl;
-//        cout << "p= " << p << endl;
-//        int y = power2(x, p);
-//        cout << "y= " << y << endl << endl;
-    }
-    
-    
-    {
-//        int a = 10;
-//        int b = 20;
-//        int c = 0;
-//        MAX(a, b, c); // теперь c равно 20
-//        cout << "a1= " << a << endl;
-//        cout << "b1= " << b << endl;
-//        cout << "c1= " << c << endl << endl;
-//        MAX(a += b, b, c); // теперь a = с = 30
-//        //(c = ((a += b > b) ? (a += b) : (b)));
-//        cout << "a2= " << a << endl;
-//        cout << "b2= " << b << endl;
-//        cout << "c2= " << c << endl << endl;
-    }
-    
-    
-    {
-//        int T = 0;
-//        //cout << "Enter T = ";
-//        cin >> T;
-//        cout << endl;
-//        int a = 0;
-//        int b = 0;
-//        for(int i = 0; i < T; i++){
-//            cin >> a >> b;
-//            cout << (a + b) << endl;
-//        }
-    }
-    
-    
-    {
-//        int a, b, c;
-//        cin >> a >> b >> c;
-//        cout << endl;
-//        double D = (b * b) - 4 * a * c;
-//        if(D >= 0.0) 
-//            cout << double( (-b + sqrt(D)) / (2 * a) ) << " " << double( (-b - sqrt(D)) / (2 * a) );
-//        else cout << "No real roots" << endl;
-    }
-    
-    
-    {
-//        unsigned num_gap = 0;
-//        char c = '\0';
-//        while (cin.get(c)) {
-//            if ( c != ' ') {
-//                cout << c;
-//                num_gap = 0;
-//            } else {
-//                num_gap++;
-//                if(num_gap < 2) {
-//                    cout << c;
-//                } else continue;
-//            }
-//        }
-    }
-    
-    
-    {
-//        int T = 0;
-//        cin >> T;
-//        cout << endl;
-//        int a = 0;
-//        int p = 0;
-//        for(int i = 0; i < T; i++){
-//            cin >> a;
-//            while(a /= 2){
-//                p++;
-//            }
-//            cout << p << endl;
-//            p = 0;
-//        }
-    }
-    
-    
-    {
-        // Break brain
-//        bar();
-    }
-    
-    
-    {
-//        int c = fibonacci(0);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(1);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(2);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(3);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(4);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(5);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(6);
-//        cout << "c = " << c << endl;
-//        c = fibonacci(7);
-//        cout << "c = " << c << endl;
-    }
-    
-    
-    {
-//        unsigned z = gcd2(24, 54);
-//        cout << "z = " << z << endl;
-    }
-    
-    
-    {
-//        revers_str();
-//        int n = 0;
-//        cin >> n;
-//        if (n != 0) {main(); cout << n << " ";} return 0;
-    }
-    
-    
-    {
-//        int a[] = { 1, 2, 3, 4, 5 }; 
-//        unsigned size = 5;
-//        int shift = 7;
-//        rotate( a, size, shift );   // &a[0]
-//        //rotate2( a, size, shift );
-//        cout << "end" << endl;
-    }
-    
-    
-    {
-//        const char * str = "C-style";
-//        cout << "str: " << str << endl;
-//        unsigned num_len = strlen(str);
-//        cout << "len = " << num_len << endl;
-    }
-    
-    
-    {
-//        char str_to[15] = "C-";
-//        const char * str_from = "style";
-//        cout << "str_to: " << str_to << endl;
-//        cout << "str_from: " << str_from << endl;
-//        strcat( str_to, str_from );
-//        cout << "str_to + str_from: " << str_to << endl;
-    }
-    
-    
-    {
-//        for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i) {
-//            int ret = strstr(tests[i].text, tests[i].pattern);
-//            (tests[i].ret_value == ret) ? cout << "OK" : cout << "Failed";
-//             cout << " : " << i << " (" << tests[i].ret_value << " : " << ret << ")" << endl;
-//        }
-    }
-    
-    
-    {
-//        int b = 19;
-//        int & l = b;
-//        cout << "b= " << b << endl;
-//        cout << "&b= " << &b << endl;
-//        cout << "&l= "<< &l << endl;
-//        int a = 42;
-//        int * p = &a;
-//        int ** pp = &p;
-//        int & d = a;
-//        int * pd = &d;
-//        cout << "a= "<< a << endl;
-//        cout << "p= "<< p << endl;
-//        cout << "pp= "<< pp << endl;
-//        cout << "d= "<< d << endl;
-//        cout << "pd= "<< pd << endl;
-//        cout << "*pd= "<< *pd << endl;
-    }
-    
-    
-    {
-//        int * m = (int *)malloc( 1000 * sizeof (int));
-//        m[9] = 9;
-//        *(m+10) = 10;
-//        free(m);
-//        m = 0;
-        
-//        int * n = new int(5);
-//        delete n;
-//        int * t = new int[1000];
-//        delete [] t;
-        
-        
-//        unsigned size = 5;
-//        char * str = new char[size];
-        
-//        cout << "str[size] = ";
-//        for ( unsigned i = 0; i < size ; i++ )
-//        {   
-//            str[i] = 0b01000110;
-//            cout << str[i];
-//        }
-//        cout << endl;
-        
-//        unsigned new_size = 15;
-//        char * new_str = resize( str, size, new_size );
-        
-//        cout << "new_str[new_size] = ";
-//        for ( char * ptr = new_str ; ptr <= new_str + new_size ; ptr++ )
-//        {
-//            cout << *ptr;
-//        }
-//        cout << endl;
-        
-//        delete [] new_str;
-    }
-    
-    
-    {
-//        for ( char * str = getline(); (*str != '\n') && (*str != '\0'); cout << *str++ );
-    }
-    
-    
-    {
-//        unsigned rows = 7;
-//        unsigned cols = 9;
-//        cout << " rows = " << rows << endl;
-//        cout << " cols = " << cols << endl;
-//        int ** m = create_array2d( rows, cols );
-//        for ( size_t i = 0; i < cols; i++ )
-//            for ( size_t j = 0; j < rows; j++ )
-//                m[j][i] = int( (i - rows/2)*(i - rows/2) + (j - cols/2)*(j - cols/2) );
-//        cout << "m[rows][cols] = " << endl;
-//        print_array2d( m, rows, cols );
-        
-//        int ** mt = transpose( m, rows, cols );
-//        cout << "mt[cols][rows] = " << endl;
-//        print_array2d( mt, cols, rows );
-        
-//        swap_min( m, rows, cols );
-//        cout << "m_swap_min[rows][cols] = " << endl;
-//        print_array2d( m, rows, cols );        
-        
-//        free_array2d( mt );
-////        free_array2d( m );
-    }
-    
-    
-    {
-//        string str = "hello";
-//        ivector3d iv3d;
-//        iv3d.array = new int [3];
-//        for ( int i = 0; i < 3; i++ ) 
-//        {
-//            iv3d.array[i] = i + 1;
-//            cout << iv3d.array[i] << '\t';
-//        }
-//        cout << endl;
-//        scale(iv3d, 2);
-//        for ( int i = 0; i < 3; i++ )
-//            cout << iv3d.array[i] << '\t';
-    }
-    
-    
-    {
-//        //String str = " H ";
-//        String str2( 5, 'F' );
-//        //cout << strlen( "Hello world   " ) << endl;
-//        for ( const char * a = str2.str; *a; a++ )
-//            cout << *a;
-//        cout << endl << endl;
-        
-//        String s1("Hello,");
-//        String s2(" world!");
-//        s1.append(s2); // теперь s1 хранит "Hello, world!"
-//        for ( const char * a = s1.str; *a; a++ )
-//            cout << *a;
-//        cout << endl;
-    }
-    
-    
-    {
-//        Cls cdi('F', 2.64, 1031);
-//        Cls cdi2('A', 3.78, 842);
-//        Cls & link = cdi;
-//        cout << "Size of CLS = " << sizeof(link) << endl << endl;
-//        //char & ccc = *link.c;
-//        cout << "cast char = \t" << *( (char*)(&link) ) << endl;
-//        cout << "cast double = \t" << *( (double*)(&link) + 1 ) << endl;
-//        cout << "cast int = \t" << *( (int*)(&link) + 4 ) << endl << endl;
-        
-//        for ( unsigned i = 0; i < sizeof(link); i++ )
-//            cout << short( *( (uint8_t*)(&link) + i ) ) << endl;
-//        cout << endl;
-        
-//        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
-//        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
-//        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
-        
-//        cout << "get_c(cdi2) = \t" << get_c(cdi2) << endl;
-//        cout << "get_d(cdi2) = \t" << get_d(cdi2) << endl;
-//        cout << "get_i(cdi2) = \t" << get_i(cdi2) << endl << endl;
-        
-//        cout << " change cdi" << endl;
-//        char &cc = get_c(cdi);
-//        cc = 'G';
-//        double &dd = get_d(cdi);
-//        dd = 4.348;
-//        int &ii = get_i(cdi);
-//        ii = 413;
-//        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
-//        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
-//        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
-    }
-    
-    
+ 
     {
         
+        {
+    //        int x = 2;
+    //        unsigned p = 16;
+    //        cout << "x= " << x << endl;
+    //        cout << "p= " << p << endl;
+    //        int y = power2(x, p);
+    //        cout << "y= " << y << endl << endl;
+        }
+        
+        
+        {
+    //        int a = 10;
+    //        int b = 20;
+    //        int c = 0;
+    //        MAX(a, b, c); // теперь c равно 20
+    //        cout << "a1= " << a << endl;
+    //        cout << "b1= " << b << endl;
+    //        cout << "c1= " << c << endl << endl;
+    //        MAX(a += b, b, c); // теперь a = с = 30
+    //        //(c = ((a += b > b) ? (a += b) : (b)));
+    //        cout << "a2= " << a << endl;
+    //        cout << "b2= " << b << endl;
+    //        cout << "c2= " << c << endl << endl;
+        }
+        
+        
+        {
+    //        int T = 0;
+    //        //cout << "Enter T = ";
+    //        cin >> T;
+    //        cout << endl;
+    //        int a = 0;
+    //        int b = 0;
+    //        for(int i = 0; i < T; i++){
+    //            cin >> a >> b;
+    //            cout << (a + b) << endl;
+    //        }
+        }
+        
+        
+        {
+    //        int a, b, c;
+    //        cin >> a >> b >> c;
+    //        cout << endl;
+    //        double D = (b * b) - 4 * a * c;
+    //        if(D >= 0.0) 
+    //            cout << double( (-b + sqrt(D)) / (2 * a) ) << " " << double( (-b - sqrt(D)) / (2 * a) );
+    //        else cout << "No real roots" << endl;
+        }
+        
+        
+        {
+    //        unsigned num_gap = 0;
+    //        char c = '\0';
+    //        while (cin.get(c)) {
+    //            if ( c != ' ') {
+    //                cout << c;
+    //                num_gap = 0;
+    //            } else {
+    //                num_gap++;
+    //                if(num_gap < 2) {
+    //                    cout << c;
+    //                } else continue;
+    //            }
+    //        }
+        }
+        
+        
+        {
+    //        int T = 0;
+    //        cin >> T;
+    //        cout << endl;
+    //        int a = 0;
+    //        int p = 0;
+    //        for(int i = 0; i < T; i++){
+    //            cin >> a;
+    //            while(a /= 2){
+    //                p++;
+    //            }
+    //            cout << p << endl;
+    //            p = 0;
+    //        }
+        }
+        
+        
+        {
+            // Break brain
+    //        bar();
+        }
+        
+        
+        {
+    //        int c = fibonacci(0);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(1);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(2);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(3);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(4);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(5);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(6);
+    //        cout << "c = " << c << endl;
+    //        c = fibonacci(7);
+    //        cout << "c = " << c << endl;
+        }
+        
+        
+        {
+    //        unsigned z = gcd2(24, 54);
+    //        cout << "z = " << z << endl;
+        }
+        
+        
+        {
+    //        revers_str();
+    //        int n = 0;
+    //        cin >> n;
+    //        if (n != 0) {main(); cout << n << " ";} return 0;
+        }
+        
+        
+        {
+    //        int a[] = { 1, 2, 3, 4, 5 }; 
+    //        unsigned size = 5;
+    //        int shift = 7;
+    //        rotate( a, size, shift );   // &a[0]
+    //        //rotate2( a, size, shift );
+    //        cout << "end" << endl;
+        }
+        
+        
+        {
+    //        const char * str = "C-style";
+    //        cout << "str: " << str << endl;
+    //        unsigned num_len = strlen(str);
+    //        cout << "len = " << num_len << endl;
+        }
+        
+        
+        {
+    //        char str_to[15] = "C-";
+    //        const char * str_from = "style";
+    //        cout << "str_to: " << str_to << endl;
+    //        cout << "str_from: " << str_from << endl;
+    //        strcat( str_to, str_from );
+    //        cout << "str_to + str_from: " << str_to << endl;
+        }
+        
+        
+        {
+    //        for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i) {
+    //            int ret = strstr(tests[i].text, tests[i].pattern);
+    //            (tests[i].ret_value == ret) ? cout << "OK" : cout << "Failed";
+    //             cout << " : " << i << " (" << tests[i].ret_value << " : " << ret << ")" << endl;
+    //        }
+        }
+        
+        
+        {
+    //        int b = 19;
+    //        int & l = b;
+    //        cout << "b= " << b << endl;
+    //        cout << "&b= " << &b << endl;
+    //        cout << "&l= "<< &l << endl;
+    //        int a = 42;
+    //        int * p = &a;
+    //        int ** pp = &p;
+    //        int & d = a;
+    //        int * pd = &d;
+    //        cout << "a= "<< a << endl;
+    //        cout << "p= "<< p << endl;
+    //        cout << "pp= "<< pp << endl;
+    //        cout << "d= "<< d << endl;
+    //        cout << "pd= "<< pd << endl;
+    //        cout << "*pd= "<< *pd << endl;
+        }
+        
+        
+        {
+    //        int * m = (int *)malloc( 1000 * sizeof (int));
+    //        m[9] = 9;
+    //        *(m+10) = 10;
+    //        free(m);
+    //        m = 0;
+            
+    //        int * n = new int(5);
+    //        delete n;
+    //        int * t = new int[1000];
+    //        delete [] t;
+            
+            
+    //        unsigned size = 5;
+    //        char * str = new char[size];
+            
+    //        cout << "str[size] = ";
+    //        for ( unsigned i = 0; i < size ; i++ )
+    //        {   
+    //            str[i] = 0b01000110;
+    //            cout << str[i];
+    //        }
+    //        cout << endl;
+            
+    //        unsigned new_size = 15;
+    //        char * new_str = resize( str, size, new_size );
+            
+    //        cout << "new_str[new_size] = ";
+    //        for ( char * ptr = new_str ; ptr <= new_str + new_size ; ptr++ )
+    //        {
+    //            cout << *ptr;
+    //        }
+    //        cout << endl;
+            
+    //        delete [] new_str;
+        }
+        
+        
+        {
+    //        for ( char * str = getline(); (*str != '\n') && (*str != '\0'); cout << *str++ );
+        }
+        
+        
+        {
+    //        unsigned rows = 7;
+    //        unsigned cols = 9;
+    //        cout << " rows = " << rows << endl;
+    //        cout << " cols = " << cols << endl;
+    //        int ** m = create_array2d( rows, cols );
+    //        for ( size_t i = 0; i < cols; i++ )
+    //            for ( size_t j = 0; j < rows; j++ )
+    //                m[j][i] = int( (i - rows/2)*(i - rows/2) + (j - cols/2)*(j - cols/2) );
+    //        cout << "m[rows][cols] = " << endl;
+    //        print_array2d( m, rows, cols );
+            
+    //        int ** mt = transpose( m, rows, cols );
+    //        cout << "mt[cols][rows] = " << endl;
+    //        print_array2d( mt, cols, rows );
+            
+    //        swap_min( m, rows, cols );
+    //        cout << "m_swap_min[rows][cols] = " << endl;
+    //        print_array2d( m, rows, cols );        
+            
+    //        free_array2d( mt );
+    ////        free_array2d( m );
+        }
+        
+        
+        {
+    //        string str = "hello";
+    //        ivector3d iv3d;
+    //        iv3d.array = new int [3];
+    //        for ( int i = 0; i < 3; i++ ) 
+    //        {
+    //            iv3d.array[i] = i + 1;
+    //            cout << iv3d.array[i] << '\t';
+    //        }
+    //        cout << endl;
+    //        scale(iv3d, 2);
+    //        for ( int i = 0; i < 3; i++ )
+    //            cout << iv3d.array[i] << '\t';
+        }
+        
+        
+        {
+    //        //String str = " H ";
+    //        String str2( 5, 'F' );
+    //        //cout << strlen( "Hello world   " ) << endl;
+    //        for ( const char * a = str2.str; *a; a++ )
+    //            cout << *a;
+    //        cout << endl << endl;
+            
+    //        String s1("Hello,");
+    //        String s2(" world!");
+    //        s1.append(s2); // теперь s1 хранит "Hello, world!"
+    //        for ( const char * a = s1.str; *a; a++ )
+    //            cout << *a;
+    //        cout << endl;
+        }
+        
+        
+        {
+    //        Cls cdi('F', 2.64, 1031);
+    //        Cls cdi2('A', 3.78, 842);
+    //        Cls & link = cdi;
+    //        cout << "Size of CLS = " << sizeof(link) << endl << endl;
+    //        //char & ccc = *link.c;
+    //        cout << "cast char = \t" << *( (char*)(&link) ) << endl;
+    //        cout << "cast double = \t" << *( (double*)(&link) + 1 ) << endl;
+    //        cout << "cast int = \t" << *( (int*)(&link) + 4 ) << endl << endl;
+            
+    //        for ( unsigned i = 0; i < sizeof(link); i++ )
+    //            cout << short( *( (uint8_t*)(&link) + i ) ) << endl;
+    //        cout << endl;
+            
+    //        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
+    //        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
+    //        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
+            
+    //        cout << "get_c(cdi2) = \t" << get_c(cdi2) << endl;
+    //        cout << "get_d(cdi2) = \t" << get_d(cdi2) << endl;
+    //        cout << "get_i(cdi2) = \t" << get_i(cdi2) << endl << endl;
+            
+    //        cout << " change cdi" << endl;
+    //        char &cc = get_c(cdi);
+    //        cc = 'G';
+    //        double &dd = get_d(cdi);
+    //        dd = 4.348;
+    //        int &ii = get_i(cdi);
+    //        ii = 413;
+    //        cout << "get_c(cdi) = \t" << get_c(cdi) << endl;
+    //        cout << "get_d(cdi) = \t" << get_d(cdi) << endl;
+    //        cout << "get_i(cdi) = \t" << get_i(cdi) << endl << endl;
+        }
+        
+        
+        {
+//            String abc = "abc";
+//            cout << "abc = " << abc.str << endl;
+//            String def = abc;
+//            cout << "def = " << def.str << endl;
+        }
+        
+        {
+//            foo_says(get_foo("Hello!"));
+        }
+        
     }
     
+    
+    {
+        foo('a');
+        //foo(97); // error compile
+        
+        String greet("Hello");
+        char ch1 = greet.at(0);
+        String const const_greet("Hello, Const!");
+        char const &ch2 = const_greet.at(0);
+        
+        short sh = 10;
+        //promotion(sh);  // error compile
+    }
     
     return 0;
 }
