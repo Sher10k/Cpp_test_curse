@@ -477,6 +477,108 @@ void promotion(char &) { std::cout << "char" << std::endl; }
 void promotion(int  &) { std::cout << "int"  << std::endl; }
 void promotion(long &) { std::cout << "long" << std::endl; }
 
+
+
+struct Number;
+struct BinaryOperation;
+
+struct Visitor {
+    virtual void visitNumber(Number const * number) = 0;
+    virtual void visitBinaryOperation(BinaryOperation const * operation) = 0;
+    virtual ~Visitor() { }
+};
+
+struct Expression
+{
+    virtual double evaluate() const = 0;
+    virtual void visit(Visitor * vistitor) const = 0;
+    virtual ~Expression() { }
+};
+
+struct Number : Expression
+{
+    Number(double value)
+        : value(value)
+    {}
+    ~Number(){}
+    
+    double evaluate() const
+    {
+        return this->value;
+    }
+    
+    double get_value() const { return value; }
+
+    void visit(Visitor * visitor) const { visitor->visitNumber(this); }
+    
+private:
+    double value;
+};
+
+struct BinaryOperation : Expression
+{
+    BinaryOperation(Expression const * left, char op, Expression const * right)
+        : left(left), right(right), op(op)
+    { }
+    ~BinaryOperation()
+    {
+        delete this->left;
+        delete this->right;
+    }
+    
+    double evaluate() const
+    {
+        switch(this->op)
+        {
+            case '+' : return this->left->evaluate() + this->right->evaluate();
+            case '-' : return this->left->evaluate() - this->right->evaluate();
+            case '*' : return this->left->evaluate() * this->right->evaluate();
+            case '/' : {
+                if(this->right->evaluate())
+                    return this->left->evaluate() / this->right->evaluate();
+            }
+            default : return 0.0;
+        }
+    }
+    
+    Expression const * get_left() const { return left; }
+    Expression const * get_right() const { return right; }
+    char get_op() const { return op; }
+
+    void visit(Visitor * visitor) const { visitor->visitBinaryOperation(this); }
+
+private:
+    Expression const * left;
+    Expression const * right;
+    char op;
+};
+
+bool check_equals(Expression const *left, Expression const *right)
+{
+    return ( ((void ***)left)[0][0] == ((void ***)right)[0][0] );
+    //return *((void**)left) == *((void**)right);
+}
+
+struct PrintVisitor : Visitor 
+{
+    void visitNumber(Number const * number)
+    {
+        std::cout << "(";
+        std::cout << number->get_value();
+        std::cout << ") ";
+    }
+
+    void visitBinaryOperation(BinaryOperation const * bop)
+    {
+        std::cout << "( ";
+        bop->get_left()->visit(this);
+        std::cout << bop->get_op() << " ";
+        bop->get_right()->visit(this);
+        std::cout << ") ";
+    }
+};
+
+
 int main()
 {
  
@@ -807,25 +909,85 @@ int main()
 //            cout << "def = " << def.str << endl;
         }
         
+        
         {
 //            foo_says(get_foo("Hello!"));
+        }
+        
+        
+        {
+    //        foo('a');
+    //        //foo(97); // error compile
+            
+    //        String greet("Hello");
+    //        char ch1 = greet.at(0);
+    //        String const const_greet("Hello, Const!");
+    //        char const &ch2 = const_greet.at(0);
+            
+    //        short sh = 10;
+    //        //promotion(sh);  // error compile
+        }
+        
+        
+        {
+    //        // сначала создаём объекты для подвыражения 4.5 * 5
+    //        Expression * sube = new BinaryOperation(new Number(4.5), '*', new Number(5));
+    //        // потом используем его в выражении для +
+    //        Expression * expr = new BinaryOperation(new Number(3), '+', sube);
+    //        // вычисляем и выводим результат: 25.5
+    //        std::cout << expr->evaluate() << std::endl;
+            
+    //        Expression *a = new BinaryOperation(new Number(1), '/', new Number(2));
+    //        Expression *b = new BinaryOperation(new Number(5), '+', a);
+    //        // вычисляем и выводим результат: 5.5
+    //        std::cout << b->evaluate() << std::endl;
+            
+    //        // тут освобождаются *все* выделенные объекты
+    //        // (например, sube будет правым операндом expr, поэтому его удалять не нужно)
+    //        delete expr;
+    //        delete b;
+        }
+        
+        
+        {
+//            Expression *a = new BinaryOperation(new Number(1), '/', new Number(2));
+//            Expression *b = new BinaryOperation(new Number(6), '+', a);
+//            Expression *c = new Number(9.1);
+            
+//            cout << check_equals(a, b) << endl; // a & b - same class
+//            cout << check_equals(a, c) << endl; // a & c - different class
+            
+//            //delete a;BinaryOperation bo(new Number(35), '/', new Number(7)); 
+//            Number num(10.3);
+//            delete b;
+//            delete c;
         }
         
     }
     
     
     {
-        foo('a');
-        //foo(97); // error compile
+        Expression *a = new BinaryOperation(new Number(1), '+', new Number(-2));
+        Expression *b = new BinaryOperation(new Number(6), '/', a);
+        Expression *c = new Number(9.1);
+        Expression *d = new BinaryOperation(b, '/', c);
         
-        String greet("Hello");
-        char ch1 = greet.at(0);
-        String const const_greet("Hello, Const!");
-        char const &ch2 = const_greet.at(0);
+        PrintVisitor visitor;
+        a->visit(&visitor);
+        cout << " = " << a->evaluate() << endl;
+        b->visit(&visitor);
+        cout << " = " << b->evaluate() << endl;
+        c->visit(&visitor);
+        cout << " = " << c->evaluate() << endl;
+        d->visit(&visitor);
+        cout << " = " << d->evaluate() << endl;
         
-        short sh = 10;
-        //promotion(sh);  // error compile
+        //delete a;
+        //delete b;
+        //delete c;
+        delete d;
     }
+    
     
     return 0;
 }
