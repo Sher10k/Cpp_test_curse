@@ -579,6 +579,109 @@ struct PrintVisitor : Visitor
 };
 
 
+struct Rational
+{
+    Rational(int numerator = 0, int denominator = 1) 
+        : numerator_(numerator), denominator_(denominator) { }
+
+    void add(Rational rational)
+    {
+        numerator_ = numerator_ * rational.denominator_ + rational.numerator_ * denominator_;
+        denominator_ *= rational.denominator_;
+    }
+    void sub(Rational rational)
+    {
+        numerator_ = numerator_ * rational.denominator_ - rational.numerator_ * denominator_;
+        denominator_ *= rational.denominator_;
+    }
+    void mul(Rational rational)
+    {
+        numerator_ *= rational.numerator_;
+        denominator_ *= rational.denominator_;
+    }
+    void div(Rational rational)
+    {
+        numerator_ *= rational.denominator_;
+        denominator_ *= rational.numerator_;
+    }
+
+    void neg()
+    {
+        numerator_ = -numerator_;
+    }
+    void inv() 
+    {
+        int temp = numerator_;
+        numerator_ = denominator_;
+        denominator_ = temp;
+    }
+    double to_double() const
+    {
+        return numerator_ / double(denominator_);
+    }
+    
+    Rational & operator += ( Rational const& rational )
+    {
+        this->add(rational);
+//        numerator_ = numerator_ * rational.denominator_ + rational.numerator_ * denominator_;
+//        denominator_ *= rational.denominator_;
+        return *this;
+    }
+    Rational & operator -= ( Rational const& rational )
+    {
+        this->sub(rational);
+//        numerator_ = numerator_ * rational.denominator_ - rational.numerator_ * denominator_;
+//        denominator_ *= rational.denominator_;
+        return *this;
+    }
+    Rational & operator *= ( Rational const& rational )
+    {
+        this->mul(rational);
+//        numerator_ *= rational.numerator_;
+//        denominator_ *= rational.denominator_;
+        return *this;
+    }
+    Rational & operator /= ( Rational const& rational )
+    {
+        this->div(rational);
+//        numerator_ *= rational.denominator_;
+//        denominator_ *= rational.numerator_;
+        return *this;
+    }
+//    Rational operator-() const;
+//    Rational operator+() const;
+
+private:
+    int numerator_;
+    int denominator_;
+};
+Rational operator + ( Rational x, Rational const& y ) {return x += y;}
+Rational operator - ( Rational x, Rational const& y ) {return x -= y;}
+Rational operator * ( Rational x, Rational const& y ) {return x *= y;}
+Rational operator / ( Rational x, Rational const& y ) {return x /= y;}
+Rational operator + ( Rational r ) {return r;}
+Rational operator - ( Rational r ) {r.neg(); return r;}
+// #1
+//Rational& operator+=(Rational &left, const Rational &right) { left.add(right); return left; }
+//Rational& operator-=(Rational &left, const Rational &right) { left.sub(right); return left; }
+//Rational& operator*=(Rational &left, const Rational &right) { left.mul(right); return left; }
+//Rational& operator/=(Rational &left, const Rational &right) { left.div(right); return left; }
+//Rational operator+(Rational left) { return left; }
+//Rational operator-(Rational left) { left.neg(); return left; }
+
+// #2
+//#define GENERATE_OP(op) \
+//Rational operator op(const Rational& lhs, const Rational& rhs) { \
+//    Rational cp_left = lhs; \
+//    cp_left op##= rhs; \ 
+//    return cp_left; \
+//}
+//GENERATE_OP(+)
+//GENERATE_OP(-)
+//GENERATE_OP(*)
+//GENERATE_OP(/)
+
+
 int main()
 {
  
@@ -963,30 +1066,70 @@ int main()
 //            delete c;
         }
         
+        
+        {
+//            Expression *a = new BinaryOperation(new Number(1), '+', new Number(-2));
+//            Expression *b = new BinaryOperation(new Number(6), '/', a);
+//            Expression *c = new Number(9.1);
+//            Expression *d = new BinaryOperation(b, '/', c);
+            
+//            PrintVisitor visitor;
+//            a->visit(&visitor);
+//            cout << " = " << a->evaluate() << endl;
+//            b->visit(&visitor);
+//            cout << " = " << b->evaluate() << endl;
+//            c->visit(&visitor);
+//            cout << " = " << c->evaluate() << endl;
+//            d->visit(&visitor);
+//            cout << " = " << d->evaluate() << endl;
+            
+//            //delete a;
+//            //delete b;
+//            //delete c;
+//            delete d;
+        }
+        
+        
+        
+        
+        
+        
     }
-    
     
     {
-        Expression *a = new BinaryOperation(new Number(1), '+', new Number(-2));
-        Expression *b = new BinaryOperation(new Number(6), '/', a);
-        Expression *c = new Number(9.1);
-        Expression *d = new BinaryOperation(b, '/', c);
-        
-        PrintVisitor visitor;
-        a->visit(&visitor);
-        cout << " = " << a->evaluate() << endl;
-        b->visit(&visitor);
-        cout << " = " << b->evaluate() << endl;
-        c->visit(&visitor);
-        cout << " = " << c->evaluate() << endl;
-        d->visit(&visitor);
-        cout << " = " << d->evaluate() << endl;
-        
-        //delete a;
-        //delete b;
-        //delete c;
-        delete d;
+        Rational r1(1, 2);
+        Rational r2(1, 3);
+        Rational r3(5);
+    
+        //r1.add(r2);
+        //r1 += r2;
+        r1 = r1 + r2;
+        std::cout << r1.to_double() << std::endl;
+        //r1.sub(r2);
+        //r1 -= r2;
+        r1 = r1 - r2;
+        std::cout << r1.to_double() << std::endl;
+        //r1.neg();
+        r1 = -r1;
+        std::cout << r1.to_double() << std::endl;
+        //r3.mul(r1);
+        //r3 *= r1;
+        r3 = r3 * r1;
+        std::cout << r3.to_double() << std::endl;
+        //r3.div(r2);
+        //r3 /= r2;
+        r3 = r3 / r2;
+        std::cout << r3.to_double() << std::endl;
+        Rational r4 = r1 * 3;
+        std::cout << r4.to_double() << std::endl;
+        Rational r5 = 9 / r4;
+        std::cout << r5.to_double() << std::endl;
     }
+    
+    {
+        
+    }
+    
     
     
     return 0;
