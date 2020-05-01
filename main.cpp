@@ -305,8 +305,9 @@ void scale(ivector3d v, int k)
 
 struct String 
 {
-    String(const char *str = "")
+    String( const char *str = "" )
     {
+        {
 //        for ( ; *str == ' '; str++ );
 //        size_t size_line = strlen( str );
 //        char * line = new char[size_line];
@@ -327,9 +328,9 @@ struct String
 //        line2[size_line - num_prob] = '\0';
 //        this->size = size_line - num_prob;
 //        this->str = line2;
+        }
         this->size = strlen(str);
         this->str = strcpy(new char[size+1], str);
-        
     }
     String( size_t n, char c ) : size(n)
     {
@@ -338,28 +339,20 @@ struct String
         for ( size_t i = 0; i < n; i++ )
             str[i] = c;
     }
+    ~String() {
+        delete[] this->str;
+    }
+    
     String(const String &other)  // Конструктор копирования
         : size(other.size), str(new char[size+1])
     {
         for ( size_t i = 0; i <= size; i++ )
             str[i] = other.str[i];
     }
-//    String(const String &other) {
-//        new (this) String(other.str);
-//    }
-    
-//    String(const String &other) : String{other.str} {};
-    
-    /* Реализуйте оператор присваивания */
 	String &operator=(const String &other)
     {
         if (this != &other)
         {
-//            delete [] this->str;
-//            this->size = other.size;
-//            this->str = new char[this->size + 1];
-//            strcpy( this->str, other.str );
-            
             delete [] str;
             size = other.size;
             str = new char[size + 1];
@@ -382,19 +375,37 @@ struct String
         delete [] this->str;
         this->str = temp;
         this->size += other.size;
-        
-//        size+=other.size;
-//        char * m=new char[size+1];
-//        strcpy(m,str);
-//        strcat(m,other.str);
-	    
-//        delete [] str;
-//        str=m;
     }
     
-    ~String() {
-        delete[] this->str;
+    struct Substring
+    {
+        Substring( char *tail_str, size_t tail_i )
+        {
+            this->str = strcpy( new char[ strlen(tail_str) + 1 ], tail_str );
+            this->i = tail_i;
+        }
+//        ~Substring()
+//        {
+//            delete [] this->str;
+//        }
+        String operator [] ( size_t j ) 
+        {
+            if ( this->i == j ) return String("");
+            char *substring = new char[ j - i + 1 ];
+            for ( size_t k = i, t = 0; k < j; k++, t++ )
+                substring[t] = str[k];
+            String sub( substring );
+            //delete [] substring;
+            return sub;
+        }
+        char *str;
+        size_t i;
+    };
+    String::Substring operator [] ( size_t i ) const
+    {
+        return Substring( str, i );
     }
+    
     
 	size_t size;
 	char *str;
@@ -619,38 +630,24 @@ struct Rational
     {
         return numerator_ / double(denominator_);
     }
+//    operator double() const
+//    {
+//        return to_double();
+//    }
     
-    Rational & operator += ( Rational const& rational )
+    int get_num() const
     {
-        this->add(rational);
-//        numerator_ = numerator_ * rational.denominator_ + rational.numerator_ * denominator_;
-//        denominator_ *= rational.denominator_;
-        return *this;
+        return this->numerator_;
     }
-    Rational & operator -= ( Rational const& rational )
+    int get_den() const
     {
-        this->sub(rational);
-//        numerator_ = numerator_ * rational.denominator_ - rational.numerator_ * denominator_;
-//        denominator_ *= rational.denominator_;
-        return *this;
+        return this->denominator_;
     }
-    Rational & operator *= ( Rational const& rational )
-    {
-        this->mul(rational);
-//        numerator_ *= rational.numerator_;
-//        denominator_ *= rational.denominator_;
-        return *this;
-    }
-    Rational & operator /= ( Rational const& rational )
-    {
-        this->div(rational);
-//        numerator_ *= rational.denominator_;
-//        denominator_ *= rational.numerator_;
-        return *this;
-    }
-//    Rational operator-() const;
-//    Rational operator+() const;
-
+    Rational & operator += ( Rational const& rational ) { this->add(rational); return *this; }
+    Rational & operator -= ( Rational const& rational ) { this->sub(rational); return *this; }
+    Rational & operator *= ( Rational const& rational ) { this->mul(rational); return *this; }
+    Rational & operator /= ( Rational const& rational ) { this->div(rational); return *this; }
+    
 private:
     int numerator_;
     int denominator_;
@@ -661,6 +658,31 @@ Rational operator * ( Rational x, Rational const& y ) {return x *= y;}
 Rational operator / ( Rational x, Rational const& y ) {return x /= y;}
 Rational operator + ( Rational r ) {return r;}
 Rational operator - ( Rational r ) {r.neg(); return r;}
+bool operator < ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) < (right.get_num() * left.get_den()) );
+}
+bool operator <= ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) <= (right.get_num() * left.get_den()) );
+}
+bool operator > ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) > (right.get_num() * left.get_den()) );
+}
+bool operator >= ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) >= (right.get_num() * left.get_den()) );
+}
+bool operator == ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) == (right.get_num() * left.get_den()) );
+}
+bool operator != ( Rational const& left, Rational const& right ) 
+{
+    return ( (left.get_num() * right.get_den()) != (right.get_num() * left.get_den()) );
+}
+
 // #1
 //Rational& operator+=(Rational &left, const Rational &right) { left.add(right); return left; }
 //Rational& operator-=(Rational &left, const Rational &right) { left.sub(right); return left; }
@@ -681,10 +703,161 @@ Rational operator - ( Rational r ) {r.neg(); return r;}
 //GENERATE_OP(*)
 //GENERATE_OP(/)
 
+struct ScopedPtr
+{
+    // реализуйте следующие методы:
+    //
+    // explicit ScopedPtr(Expression *ptr = 0)
+    // ~ScopedPtr()
+    // Expression* get() const
+    // Expression* release()
+    // void reset(Expression *ptr = 0)
+    // Expression& operator*() const
+    // Expression* operator->() const
+    explicit ScopedPtr( Expression *ptr = 0 )
+    {
+        this->ptr_ = ptr;
+    }
+    ~ScopedPtr()
+    {
+        delete this->ptr_;
+    }
+    Expression* get() const
+    {
+        return this->ptr_;
+    }
+    Expression* release()
+    {
+        Expression* temp = this->ptr_;
+        this->ptr_ = 0;
+        return temp;
+    }
+    void reset( Expression *ptr = 0 )
+    {
+        delete this->ptr_;
+        this->ptr_ = ptr;
+    }
+    Expression& operator*() const
+    {
+        return *this->ptr_;
+    }
+    Expression* operator->() const
+    {
+        return this->ptr_;
+    }
+
+private:
+    // запрещаем копирование ScopedPtr
+    ScopedPtr( const ScopedPtr& );
+    ScopedPtr& operator = ( const ScopedPtr& );
+
+    Expression *ptr_;
+};
+
+struct SharedPtr
+{
+    // реализуйте следующие методы
+    //
+    // explicit SharedPtr(Expression *ptr = 0)
+    // ~SharedPtr()
+    // SharedPtr(const SharedPtr &)
+    // SharedPtr& operator=(const SharedPtr &)
+    // Expression* get() const
+    // void reset(Expression *ptr = 0)
+    // Expression& operator*() const
+    // Expression* operator->() const
+    explicit SharedPtr(Expression *ptr = 0)
+    {
+        
+    }
+    ~SharedPtr()
+    {
+        
+    }
+    SharedPtr(const SharedPtr &)
+    {
+        
+    }
+    SharedPtr& operator=(const SharedPtr &)
+    {
+        
+    }
+    Expression* get() const
+    {
+        
+    }
+    void reset(Expression *ptr = 0)
+    {
+        
+    }
+    Expression& operator*() const
+    {
+        
+    }
+    Expression* operator->() const
+    {
+        
+    }
+};
+
+
+class int_array
+{
+	class row
+	{
+		friend class int_array;
+		int *first_cell_in_row;
+
+		row( int *p ) : first_cell_in_row(p) {}
+		
+	public:
+		int &operator[] ( int index );
+	};
+
+	int nrows;
+	int ncols;
+	int *the_array;
+	
+public:
+	virtual
+	~int_array( void );
+	int_array( int rows, int cols );
+	
+	row operator[] (int index);
+};
+
+//========================================================
+// функции-члены класса int_array
+//========================================================
+int_array::int_array( int rows, int cols )
+	: nrows ( rows ), 
+	  ncols ( cols ), 
+	  the_array ( new int[rows * cols] )
+{}
+//--------------------------------------------------------
+int_array::~int_array( void )
+{
+	delete [] the_array;
+}
+//--------------------------------------------------------
+inline int_array::row int_array::operator[]( int index )
+{
+	return row( the_array + (ncols * index) );
+}
+
+//========================================================
+// функции-члены класса int_array::row
+//========================================================
+inline int &int_array::row::operator[]( int index )
+{
+	return first_cell_in_row[ index ];
+}
+//========================================================
 
 int main()
 {
  
+    
     {
         
         {
@@ -1090,43 +1263,61 @@ int main()
         }
         
         
+        {
+    //        Rational r1(1, 2);
+    //        Rational r2(1, 3);
+    //        Rational r3(5);
         
+    //        std::cout << "(r1 < r2): " << (r1 < r2) << std::endl;
+    //        std::cout << "(r1 != r2): " << (r1 != r2) << std::endl;
+    //        std::cout << "(r1 < 1): " << (r1 < 1) << std::endl;
+    //        std::cout << "(r2 >= 1): " << (r2 > 1) << std::endl;
+    //        std::cout << "(2 > r2): " << (2 > r2) << std::endl;
+            
+    //        //r1.add(r2);
+    //        //r1 += r2;
+    //        r1 = r1 + r2;
+    //        std::cout << r1.to_double() << std::endl;
+    //        //r1.sub(r2);
+    //        //r1 -= r2;
+    //        r1 = r1 - r2;
+    //        std::cout << r1.to_double() << std::endl;
+    //        //r1.neg();
+    //        r1 = -r1;
+    //        std::cout << r1.to_double() << std::endl;
+    //        //r3.mul(r1);
+    //        //r3 *= r1;
+    //        r3 = r3 * r1;
+    //        std::cout << r3.to_double() << std::endl;
+    //        //r3.div(r2);
+    //        //r3 /= r2;
+    //        r3 = r3 / r2;
+    //        std::cout << r3.to_double() << std::endl;
+    //        Rational r4 = r1 * 3;
+    //        std::cout << r4.to_double() << std::endl;
+    //        Rational r5 = 9 / r4;
+    //        std::cout << r5.to_double() << std::endl;
+        }
         
         
         
     }
     
-    {
-        Rational r1(1, 2);
-        Rational r2(1, 3);
-        Rational r3(5);
-    
-        //r1.add(r2);
-        //r1 += r2;
-        r1 = r1 + r2;
-        std::cout << r1.to_double() << std::endl;
-        //r1.sub(r2);
-        //r1 -= r2;
-        r1 = r1 - r2;
-        std::cout << r1.to_double() << std::endl;
-        //r1.neg();
-        r1 = -r1;
-        std::cout << r1.to_double() << std::endl;
-        //r3.mul(r1);
-        //r3 *= r1;
-        r3 = r3 * r1;
-        std::cout << r3.to_double() << std::endl;
-        //r3.div(r2);
-        //r3 /= r2;
-        r3 = r3 / r2;
-        std::cout << r3.to_double() << std::endl;
-        Rational r4 = r1 * 3;
-        std::cout << r4.to_double() << std::endl;
-        Rational r5 = 9 / r4;
-        std::cout << r5.to_double() << std::endl;
-    }
     
     {
+        int_array ar(10,20); // то же самое, что и ar[10][20], но
+        // размерность во время компиляции
+        ar[1][2] = 100; // может быть не определена.
+        cout << ar[1][2] << endl;
+        
+        String const hello("hello world !!!");
+        cout << hello.str << endl;
+        String const hell = hello[0][4]; // теперь в hell хранится подстрока "hell"
+        cout << hell.str << endl;
+        String const ell = hello[2][9]; // теперь в ell хранится подстрока "ell"
+        cout << ell.str << endl;
+        String const empty = hello[1][1];
+        cout << empty.str << endl;
         
     }
     
