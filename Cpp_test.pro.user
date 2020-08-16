@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.10.1, 2020-05-02T01:42:07. -->
+<!-- Written by QtCreator 4.10.1, 2020-08-17T01:26:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -279,7 +279,7 @@
     <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
     <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
     <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
-    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
+    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">2</value>
     <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
     <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
     <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
@@ -304,8 +304,8 @@
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Cpp_test</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/roman/Curse/Cpp_test_curse/Cpp_test.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Cpp_test2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/roman/Документы/Curse/Cpp_test_curse/Cpp_test.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

@@ -9,6 +9,8 @@
 
 #include <cstddef> // size_t
 #include <cstring> // strlen, strcpy
+//#include <memory>
+
 
 using namespace std;
 
@@ -714,7 +716,7 @@ struct ScopedPtr
     // void reset(Expression *ptr = 0)
     // Expression& operator*() const
     // Expression* operator->() const
-    explicit ScopedPtr( Expression *ptr = 0 )
+    explicit ScopedPtr( Expression *ptr = nullptr )
     {
         this->ptr_ = ptr;
     }
@@ -729,15 +731,15 @@ struct ScopedPtr
     Expression* release()
     {
         Expression* temp = this->ptr_;
-        this->ptr_ = 0;
+        this->ptr_ = nullptr;
         return temp;
     }
-    void reset( Expression *ptr = 0 )
+    void reset( Expression *ptr = nullptr )
     {
         delete this->ptr_;
         this->ptr_ = ptr;
     }
-    Expression& operator*() const
+    Expression& operator*() const // Возвращаем ссылку для того чтобы не копировать объект
     {
         return *this->ptr_;
     }
@@ -766,93 +768,88 @@ struct SharedPtr
     // void reset(Expression *ptr = 0)
     // Expression& operator*() const
     // Expression* operator->() const
-    explicit SharedPtr(Expression *ptr = 0)
+    explicit SharedPtr( Expression *ptr = nullptr ) 
+        : ptr_(ptr),
+          count_(nullptr)
     {
-        
+        this->count_ = new size_t(1);
     }
     ~SharedPtr()
     {
-        
+        if ( --*this->count_ == 0 ) 
+        {
+            delete this->ptr_;
+            delete this->count_;
+        }
     }
-    SharedPtr(const SharedPtr &)
+    SharedPtr( const SharedPtr & sptr )
+        : ptr_(sptr.ptr_),
+          count_(sptr.count_)
     {
-        
+            (*this->count_)++;
     }
-    SharedPtr& operator=(const SharedPtr &)
+    SharedPtr& operator= ( const SharedPtr & sptr )
     {
-        
+        if ( this->ptr_ == sptr.ptr_ ) return *this;
+        if ( --*this->count_ == 0 ) 
+        {
+            delete this->ptr_;
+            delete this->count_;
+        }
+        else
+        {
+            (*this->count_)--;
+        }
+        this->ptr_ = sptr.ptr_;
+        this->count_ = sptr.count_;
+        (*this->count_)++;
+        return *this;
     }
+    
     Expression* get() const
     {
-        
+        return this->ptr_;
     }
-    void reset(Expression *ptr = 0)
+    void reset( Expression *ptr = nullptr )
     {
-        
+        if ( this->ptr_ != ptr )
+        {
+            if ( --*this->count_ == 0 ) 
+            {
+                delete this->ptr_;
+                delete this->count_;
+            }
+            else
+            {
+                (*this->count_)--;
+            }
+            this->ptr_ = ptr;
+            this->count_ = new size_t(1);
+        }
     }
     Expression& operator*() const
     {
-        
+        return *this->ptr_;
     }
     Expression* operator->() const
     {
-        
+        return this->ptr_;
     }
+    
+private:
+    Expression * ptr_;
+    size_t * count_;
 };
+/*
+Прежде, чем писать подсказки, скажу, что это задание испытывает ваш характер. Оно очень полезное.
+Самое главное: не усложняйте. Самый простой способ это хранить указатель на счетчик в самой структуре.
+Чтобы успешно решить задание, помните:
 
+1)Умный указатель создается один раз на уникальный объект. Это значит, что другие копии указателя получаются только с помощью копирования или присваивания. В метод reset передается только новый объект!
+2)Проверяйте везде, что будет, если вам передали нулевой указатель
+3)Самое сложное - оператор присваивания и метод reset. Нужно уменьшать счетчик, и, если он 0, освобождать память на объект и счетчик.
+ */
 
-class int_array
-{
-	class row
-	{
-		friend class int_array;
-		int *first_cell_in_row;
-
-		row( int *p ) : first_cell_in_row(p) {}
-		
-	public:
-		int &operator[] ( int index );
-	};
-
-	int nrows;
-	int ncols;
-	int *the_array;
-	
-public:
-	virtual
-	~int_array( void );
-	int_array( int rows, int cols );
-	
-	row operator[] (int index);
-};
-
-//========================================================
-// функции-члены класса int_array
-//========================================================
-int_array::int_array( int rows, int cols )
-	: nrows ( rows ), 
-	  ncols ( cols ), 
-	  the_array ( new int[rows * cols] )
-{}
-//--------------------------------------------------------
-int_array::~int_array( void )
-{
-	delete [] the_array;
-}
-//--------------------------------------------------------
-inline int_array::row int_array::operator[]( int index )
-{
-	return row( the_array + (ncols * index) );
-}
-
-//========================================================
-// функции-члены класса int_array::row
-//========================================================
-inline int &int_array::row::operator[]( int index )
-{
-	return first_cell_in_row[ index ];
-}
-//========================================================
 
 int main()
 {
@@ -1300,28 +1297,125 @@ int main()
         }
         
         
+        {
+            // --- 5.2
+    //        int_array ar(10,20); // то же самое, что и ar[10][20], но
+    //        // размерность во время компиляции
+    //        ar[1][2] = 100; // может быть не определена.
+    //        cout << ar[1][2] << endl;
+            
+    //        String const hello("hello world !!!");
+    //        cout << hello.str << endl;
+    //        String const hell = hello[0][4]; // теперь в hell хранится подстрока "hell"
+    //        cout << hell.str << endl;
+    //        String const ell = hello[2][9]; // теперь в ell хранится подстрока "ell"
+    //        cout << ell.str << endl;
+    //        String const empty = hello[1][1];
+    //        cout << empty.str << endl;
+            
+        }
+        
+        
+        {
+            // --- 5.3
+    //        SharedPtr p1;
+    //        {
+    //            SharedPtr p2( new Expression("expr1") );
+    //            SharedPtr p3( new Expression("expr2") );
+    //            SharedPtr p4( p2 );
+    //            SharedPtr p5;
+    //            p5 = p2;
+    //            p5 = p4;
+    //            p1 = p5;
+    //            p3.reset( NULL );
+    //            p3 = p5;
+    //            p5.reset( NULL );
+    //            SharedPtr p6;
+    //            SharedPtr p7;
+    //            p7 = p7;
+    //            p7.reset( NULL );
+    //            p7.reset( new Expression("expr3") );
+    //            SharedPtr p8( new Expression("expr4") );
+    //            p8.reset( NULL );
+    //        }
+    //        p1 = p1;
+        }
         
     }
     
     
     {
-        int_array ar(10,20); // то же самое, что и ar[10][20], но
-        // размерность во время компиляции
-        ar[1][2] = 100; // может быть не определена.
-        cout << ar[1][2] << endl;
-        
-        String const hello("hello world !!!");
-        cout << hello.str << endl;
-        String const hell = hello[0][4]; // теперь в hell хранится подстрока "hell"
-        cout << hell.str << endl;
-        String const ell = hello[2][9]; // теперь в ell хранится подстрока "ell"
-        cout << ell.str << endl;
-        String const empty = hello[1][1];
-        cout << empty.str << endl;
+        // --- 6.1
         
     }
     
     
-    
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class int_array
+{
+	class row
+	{
+		friend class int_array;
+		int *first_cell_in_row;
+
+		row( int *p ) : first_cell_in_row(p) {}
+		
+	public:
+		int &operator[] ( int index );
+	};
+
+	int nrows;
+	int ncols;
+	int *the_array;
+	
+public:
+	virtual
+	~int_array( void );
+	int_array( int rows, int cols );
+	
+	row operator[] (int index);
+};
+
+//========================================================
+// функции-члены класса int_array
+//========================================================
+int_array::int_array( int rows, int cols )
+	: nrows ( rows ), 
+	  ncols ( cols ), 
+	  the_array ( new int[rows * cols] )
+{}
+//--------------------------------------------------------
+int_array::~int_array( void )
+{
+	delete [] the_array;
+}
+//--------------------------------------------------------
+inline int_array::row int_array::operator[]( int index )
+{
+	return row( the_array + (ncols * index) );
+}
+
+//========================================================
+// функции-члены класса int_array::row
+//========================================================
+inline int &int_array::row::operator[]( int index )
+{
+	return first_cell_in_row[ index ];
+}
+//========================================================
